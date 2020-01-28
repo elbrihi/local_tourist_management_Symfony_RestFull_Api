@@ -25,24 +25,7 @@ class PlaceController extends Controller
         $places = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Place')
                 ->findAll();
-        /* @var $places Place[] */
-
-        $formatted = [];
-        foreach ($places as $place) {
-            $formatted[] = [
-               'id' => $place->getId(),
-               'name' => $place->getName(),
-               'address' => $place->getAddress(),
-            ];
-        }
-
-
-        // crating the the view handler
-        $view = View::create($formatted);
-        $view->setFormat('json');
-
-        // managing the response
-        return $view;
+        return $places;
     }
 
     /**
@@ -61,19 +44,26 @@ class PlaceController extends Controller
         if (empty($place)) {
             return new JsonResponse(['message' => 'Place not found'], Response::HTTP_NOT_FOUND);
         }
-         $formatted = [
-           'id' => $place->getId(),
-           'name' => $place->getName(),
-           'address' => $place->getAddress(),
+  
+        return $place;
+    }
+     /**
+     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\Post("/places")
+     */
+    public function postPlacesAction(Request $request)
+    {
+        
+        $place = new Place();
+        $place->setName($request->get('name'))
+            ->setAddress($request->get('address'));
 
-        ];
+        $em = $this->get('doctrine.orm.entity_manager');
+        $em->persist($place);
+        $em->flush();
 
-         // crating the the view handler
-         $view = View::create($formatted);
-         $view->setFormat('json');
- 
-         // managing the response
-         return $view;
+        return $place;
+
     }
 
    
