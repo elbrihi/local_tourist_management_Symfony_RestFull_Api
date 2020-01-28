@@ -10,10 +10,7 @@ use AppBundle\Entity\User;
 
 class UserController extends Controller
 {
-    /**
-     * @Route("/users", name="users_list")
-     * @Method({"GET"})
-     */
+
     public function getUsersAction(Request $request)
     {
         $users = $this->get('doctrine.orm.entity_manager')
@@ -35,10 +32,7 @@ class UserController extends Controller
 
         return new JsonResponse($formatted);
     }
-    /**
-     * @Route("/users/{id}", name="users_one")
-     * @Method({"GET"})
-     */
+    
     public function getUserAction(Request $request)
     {
         $user = $this->get('doctrine.orm.entity_manager')
