@@ -8,14 +8,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use FOS\RestBundle\Controller\Annotations\Get; // N'oublons pas d'inclure Get
+use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\View\ViewHandler;
+use FOS\RestBundle\View\View; // Utilisation de la vue de FOSRestBundle
 use AppBundle\Entity\Place;
 
 class PlaceController extends Controller
 {
     
     /**
-     * @Get("/places")
+     * @Rest\View()
+     * @Rest\Get("/places")
      */
     public function getPlacesAction(Request $request)
     {
@@ -33,12 +36,21 @@ class PlaceController extends Controller
             ];
         }
 
-        return new JsonResponse($formatted);
+
+        // crating the the view handler
+        $view = View::create($formatted);
+        $view->setFormat('json');
+
+        // managing the response
+        return $view;
     }
 
     /**
-     * @Get("/places/{id}")
+     * 
+     * @Rest\View()
+     * @Rest\Get("/places/{id}")
      */
+    
     public function getPlaceAction(Request $request)
     {
         
@@ -56,7 +68,12 @@ class PlaceController extends Controller
 
         ];
 
-        return new JsonResponse($formatted);
+         // crating the the view handler
+         $view = View::create($formatted);
+         $view->setFormat('json');
+ 
+         // managing the response
+         return $view;
     }
 
    

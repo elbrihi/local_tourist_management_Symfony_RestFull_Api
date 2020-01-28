@@ -6,11 +6,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use FOS\RestBundle\Controller\Annotations\Get;
 use AppBundle\Entity\User;
 
 class UserController extends Controller
 {
 
+    /**
+     * @Get("/users")
+     */
     public function getUsersAction(Request $request)
     {
         $users = $this->get('doctrine.orm.entity_manager')
@@ -32,6 +36,10 @@ class UserController extends Controller
 
         return new JsonResponse($formatted);
     }
+    
+    /**
+     * @Get("/users/{id}")
+     */
     
     public function getUserAction(Request $request)
     {
