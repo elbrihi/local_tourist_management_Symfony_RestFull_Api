@@ -5,7 +5,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
 * @ORM\Entity()
-* @ORM\Table(name="users")
+* @ORM\Table(name="users",
+*      uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique",columns={"email"})}
+* )
 */
 class User
 {
@@ -17,17 +19,17 @@ class User
     protected $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="firstname",type="string")
      */
     protected $firstname;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="lastname",type="string")
      */
     protected $lastname;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="email",type="string")
      */
     protected $email;
 

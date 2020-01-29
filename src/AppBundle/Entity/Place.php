@@ -21,12 +21,12 @@ class Place
     protected $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="name",type="string")
      */
     protected $name;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(name="address",type="string")
      */
     protected $address;
 

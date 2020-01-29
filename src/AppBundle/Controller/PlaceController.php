@@ -48,28 +48,21 @@ class PlaceController extends Controller
   
         return $place;
     }
-     /**
+    /**
      * @Rest\View(statusCode=Response::HTTP_CREATED)
      * @Rest\Post("/places")
      */
     public function postPlacesAction(Request $request)
     {
-        
-        /*$place = new Place();
-        $place->setName($request->get('name'))
-            ->setAddress($request->get('address'));
-
-        $em = $this->get('doctrine.orm.entity_manager');
-        $em->persist($place);
-        $em->flush();
-
-        return $place;*/
         $place = new Place();
         $form = $this->createForm(PlaceType::class, $place);
-
+        
+        
+   
         $form->submit($request->request->all()); // Validation des données
-
+       
         if ($form->isValid()) {
+            
             $em = $this->get('doctrine.orm.entity_manager');
             $em->persist($place);
             $em->flush();
@@ -77,8 +70,54 @@ class PlaceController extends Controller
         } else {
             return $form;
         }
-
     }
+     /**
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\Delete("/places/{id}")
+     */
+    public function removePlaceAction(Request $request)
+    {
+        $em = $this->get('doctrine.orm.entity_manager');
+        $place = $em->getRepository('AppBundle:Place')
+                    ->find($request->get('id'));
+        /* @var $place Place */
 
-   
+        if ($place) {
+            $em->remove($place);
+            $em->flush();
+        }
+    }
+    
+     /**
+     * @Rest\View()
+     * @Rest\Put("/places/{id}")
+     */
+    public function putPlaceAction(Request $request)
+    {
+        $place = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Place')
+                ->find($request->get('id'));
+       
+        if (empty($place)) {
+            return new JsonResponse(['message' => 'Place not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        $form = $this->createForm(PlaceType::class, $place);
+
+        $form->submit($request->request->all());
+
+        if($form->isValid())
+        {
+            $em = $this->get('doctrine.orm.entity_manager');
+            
+            $em->merge($place);
+
+            $em->flush();
+        }
+        else
+        {
+            return $form;
+        }
+       
+    }
 }
