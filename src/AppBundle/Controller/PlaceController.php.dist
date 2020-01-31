@@ -54,8 +54,6 @@ class PlaceController extends Controller
      */
     public function postPlacesAction(Request $request)
     {
-
-        
         $place = new Place();
         $form = $this->createForm(PlaceType::class, $place);
         

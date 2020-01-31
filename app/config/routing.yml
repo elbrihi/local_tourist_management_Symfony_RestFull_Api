@@ -1,9 +1,14 @@
 app:
-    resource: '@AppBundle/Controller/'
-    type: annotation
+    resource: "@AppBundle/Controller/DefaultController.php"
+    type:     annotation
+
 places:
     type:     rest
     resource: AppBundle\Controller\PlaceController
+
+prices:
+    type:     rest
+    resource: AppBundle\Controller\Place\PriceController
 
 users:
     type:     rest
