@@ -34,14 +34,21 @@ class Place
     protected $address;
 
     /**
-     * @ORM\OneToMany(targetEntity="Price",mappedBy="place")
+     * @ORM\OneToMany(targetEntity="Price",mappedBy="place",cascade={"persist"})
      * @var Price[]
      */
     private $prices;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Theme",mappedBy="place")
+     * @var Theme[]
+     * 
+     */
+     private $themes ;
     public function __construct()
     {
         $this->prices = new ArrayCollection();
+        $this->themes = new ArrayCollection();
     }
 
     public function getId()
@@ -75,6 +82,21 @@ class Place
     {
         $this->address = $address;
         return $this;
+    }
+
+    public function getPrices()
+    {
+        return $this->prices;
+    }
+
+    public function setThemes($themes)
+    {
+        $this->themes = $themes;
+    }
+    
+    public function getThemes()
+    {
+        return $this->themes;
     }
     
 }

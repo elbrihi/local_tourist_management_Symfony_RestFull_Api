@@ -29,7 +29,7 @@ class Price
     protected $value ;
 
      /**
-     * @ORM\ManyToOne(targetEntity="Place", inversedBy="prices") //  it means that Pice is the subgroupe of Place
+     * @ORM\ManyToOne(targetEntity="Place", inversedBy="prices",cascade={"all"}) //  it means that Pice is the subgroupe of Place
      * @var Place
      */
     protected $place;

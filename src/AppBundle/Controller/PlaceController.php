@@ -18,7 +18,7 @@ class PlaceController extends Controller
 {
     
     /**
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"place"})
      * @Rest\Get("/places")
      */
     public function getPlacesAction(Request $request)
@@ -31,7 +31,7 @@ class PlaceController extends Controller
 
     /**
      * 
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"place"})
      * @Rest\Get("/places/{id}")
      */
     
@@ -49,7 +49,7 @@ class PlaceController extends Controller
         return $place;
     }
     /**
-     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\View(statusCode=Response::HTTP_CREATED, serializerGroups={"place"})
      * @Rest\Post("/places")
      */
     public function postPlacesAction(Request $request)
@@ -60,10 +60,7 @@ class PlaceController extends Controller
         $form = $this->createForm(PlaceType::class, $place);
         
         
-        return $form;
-   
         $form->submit($request->request->all()); // Validation des données
-        return $form;
         if ($form->isValid()) {
             
             $em = $this->get('doctrine.orm.entity_manager');
@@ -75,7 +72,7 @@ class PlaceController extends Controller
         }
     }
      /**
-     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT)
+     * @Rest\View(statusCode=Response::HTTP_NO_CONTENT, serializerGroups={"place"})
      * @Rest\Delete("/places/{id}")
      */
     public function removePlaceAction(Request $request)
@@ -92,7 +89,7 @@ class PlaceController extends Controller
     }
     
      /**
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"place"})
      * @Rest\Put("/places/{id}")
      */
     public function putPlaceAction(Request $request)
@@ -124,7 +121,7 @@ class PlaceController extends Controller
        
     }
      /**
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"place"})
      * @Rest\Put("/places/{id}")
      */
     public function updatePlaceAction(Request $request)

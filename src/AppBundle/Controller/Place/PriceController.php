@@ -15,16 +15,25 @@ class PriceController extends Controller
 {
    
      /**
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"price"})
      * @Rest\Get("/places/{id}/prices")
      */
-    public function getPricesAction()
+    public function getPricesAction(Request $request)
     {
-        
+        $place = $this->get('doctrine.orm.entity_manager')
+                ->getRepository('AppBundle:Place')
+                ->find($request->get('id')); // L'identifiant en tant que paramétre n'est plus nécessaire
+        /* @var $place Place */
+
+        if (empty($place)) {
+            return $this->placeNotFound();
+        }
+
+        return $place->getPrices();
     }
 
    /**
-     * @Rest\View(statusCode=Response::HTTP_CREATED)
+     * @Rest\View(statusCode=Response::HTTP_CREATED, serializerGroups={"price"})
      * @Rest\Post("/places/{id}/prices")
      */
     public function postPricesAction(Request $request)
@@ -40,9 +49,7 @@ class PriceController extends Controller
 
         $form = $this->createForm(PriceType::class, $price);
        
-        $form->submit($request->request->all());//
-
-        
+        $form->submit($request->request->all());//   
 
         if ($form->isValid()) {
             $em = $this->get('doctrine.orm.entity_manager');
@@ -54,4 +61,8 @@ class PriceController extends Controller
         }
     }
 
+    private function placeNotFound()
+    {
+        return \FOS\RestBundle\View\View::create(['message' => 'Place not found'], Response::HTTP_NOT_FOUND);
+    }
 }
