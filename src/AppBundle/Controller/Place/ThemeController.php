@@ -36,9 +36,9 @@ class ThemeController extends Controller
         
         $theme->setPlace($place);
 
-       
+      
         $form->submit($request->request->all());// 
-       
+        
         if($form->isValid())
         {
             $em = $this->get('doctrine.orm.entity_manager');

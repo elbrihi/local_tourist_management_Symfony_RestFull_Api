@@ -20,12 +20,12 @@ class Theme
     private $id ;
 
     /**
-     * @ORM\Column(name="name")
+     * @ORM\Column(type="string")
      */
     private $name;
 
     /**
-     * @ORM\Column(name="value")
+     * @ORM\Column(type="integer")
      */
     private $value;
 
