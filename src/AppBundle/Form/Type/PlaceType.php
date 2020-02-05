@@ -3,6 +3,7 @@ namespace AppBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PlaceType extends AbstractType
@@ -11,6 +12,11 @@ class PlaceType extends AbstractType
     {
         $builder->add('name');
         $builder->add('address');
+        $builder->add('prices', CollectionType::class, [
+            'entry_type' => PriceType::class,
+            'allow_add' => true,
+            'error_bubbling' => false,
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

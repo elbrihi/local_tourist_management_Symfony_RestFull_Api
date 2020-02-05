@@ -34,7 +34,7 @@ class Place
     protected $address;
 
     /**
-     * @ORM\OneToMany(targetEntity="Price",mappedBy="place",cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Price",mappedBy="place")
      * @var Price[]
      */
     private $prices;
