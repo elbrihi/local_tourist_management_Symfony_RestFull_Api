@@ -20,6 +20,35 @@ class PreferenceController extends Controller
 {
     /**
      * 
+     *@Rest\View(serializerGroups={"preference"})
+     *@Rest\Get("/users/{id}/prefrecence") 
+     * 
+     */
+    public function getPreferenceAction(Request $request)
+    {
+        $user = $this->get('doctrine.orm.entity_manager')
+                            ->getRepository('AppBundle:User')
+                            ->find($request->get('id'));
+        return $user->getPreferences();
+
+    }
+
+    /**
+     * 
+     *@Rest\View()
+     *@Rest\Get("/preferences") 
+     * 
+     */
+    public function getPreferencesAction()
+    {
+        $preferences = $this->get('doctrine.orm.entity_manager')
+                            ->getRepository('AppBundle:Preference')
+                            ->findAll();
+        return $preferences;
+    }
+
+    /**
+     * 
      * @Rest\View()
      * @Rest\Post("/users/{id}/preferences")
      */

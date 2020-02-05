@@ -45,6 +45,7 @@ class Place
      * 
      */
      private $themes ;
+     
     public function __construct()
     {
         $this->prices = new ArrayCollection();

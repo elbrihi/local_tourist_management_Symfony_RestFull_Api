@@ -23,6 +23,7 @@ class PlaceController extends Controller
      */
     public function getPlacesAction(Request $request)
     {
+        
         $places = $this->get('doctrine.orm.entity_manager')
                 ->getRepository('AppBundle:Place')
                 ->findAll();

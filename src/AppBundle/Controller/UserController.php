@@ -17,7 +17,7 @@ class UserController extends Controller
 {
 
     /**
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"place"})
      * @Rest\Get("/users")
      */
     public function getUsersAction(Request $request)
@@ -31,7 +31,7 @@ class UserController extends Controller
     }
     
     /**
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"place"})
      * @Rest\Get("/users/{id}")
      */
     
@@ -56,11 +56,18 @@ class UserController extends Controller
     public function postUsersAction(Request $request)
     {
         $user = new User();
-        $form = $this->createForm(UserType::class, $user);
+        
+        $form = $this->createForm(UserType::class, $user, ['validation_groups'=>['Default', 'New']]);
 
+       
         $form->submit($request->request->all());
-
+        
         if ($form->isValid()) {
+        
+            $encoder = $this->get('security.password_encoder');
+            // le mot de passe en claire est encodé avant la sauvegarde
+            $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($encoded);
             $em = $this->get('doctrine.orm.entity_manager');
             $em->persist($user);
             $em->flush();
@@ -87,7 +94,7 @@ class UserController extends Controller
         }
     }
     /**
-     * @Rest\View()
+     * @Rest\View(serializerGroups={"place"})
      * @Rest\Patch("/users/{id}")
      */
     public function patchUserAction(Request $request)
@@ -97,26 +104,62 @@ class UserController extends Controller
 
     private function updateUser(Request $request, $clearMissing)
     {
-        $user = $this->get('doctrine.orm.entity_manager')
-                ->getRepository('AppBundle:User')
-                ->find($request->get('id')); // L'identifiant en tant que paramètre n'est plus nécessaire
-        /* @var $user User */
+            $user = $this->get('doctrine.orm.entity_manager')
+            ->getRepository('AppBundle:User')
+            ->find($request->get('id')); // L'identifiant en tant que paramètre n'est plus nécessaire
+            /* @var $user User */
 
-        if (empty($user)) {
-            return new JsonResponse(['message' => 'User not found'], Response::HTTP_NOT_FOUND);
-        }
+            if (empty($user)) {
+            return $this->userNotFound();
+            }
 
-        $form = $this->createForm(UserType::class, $user);
+            if ($clearMissing) { // Si une mise à jour complète, le mot de passe doit être validé
+            $options = ['validation_groups'=>['Default', 'FullUpdate']];
+            } else {
+            $options = []; // Le groupe de validation par défaut de Symfony est Default
+            }
 
-        $form->submit($request->request->all(), $clearMissing);
+            $form = $this->createForm(UserType::class, $user, $options);
 
-        if ($form->isValid()) {
-            $em = $this->get('doctrine.orm.entity_manager');
-            $em->persist($user);
-            $em->flush();
-            return $user;
-        } else {
-            return $form;
-        }
+            $form->submit($request->request->all(), $clearMissing);
+
+            if ($form->isValid()) {
+            // Si l'utilisateur veut changer son mot de passe
+            if (!empty($user->getPlainPassword())) {
+            $encoder = $this->get('security.password_encoder');
+            $encoded = $encoder->encodePassword($user, $user->getPlainPassword());
+            $user->setPassword($encoded);
+            }
+                $em = $this->get('doctrine.orm.entity_manager');
+                $em->merge($user);
+                $em->flush();
+                return $user;
+                } else {
+                return $form;
+            }
     }
+    /**
+     * @Rest\View(serializerGroups={"place"})
+     * @Rest\Get("/users/{id}/suggestions")
+     */
+    public function getUserSuggestionsAction(Request $request)
+    {
+        $user = $this->get('doctrine.orm.entity_manager')
+                        ->getRepository('AppBundle:User')
+                       ->find($request->get('id')); 
+        $places = $this->get('doctrine.orm.entity_manager')
+        ->getRepository('AppBundle:Place')
+        ->findAll();
+
+        $suggestions = [];
+
+        foreach ($places as $place) {
+            if ($user->preferencesMatch($place->getThemes())) {
+                $suggestions[] = $place;
+            }
+        }
+
+        return $suggestions;
+    }
+    
 }

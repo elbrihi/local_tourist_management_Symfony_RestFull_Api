@@ -3,7 +3,9 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Component\Security\Core\User\UserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+
 
 
 /**
@@ -12,7 +14,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 *      uniqueConstraints={@ORM\UniqueConstraint(name="users_email_unique",columns={"email"})}
 * )
 */
-class User
+class User implements UserInterface
 {
    /**
      * @ORM\Id
@@ -44,7 +46,16 @@ class User
      */
     private $prefrences;
 
-    public function __cosntruct()
+    const MATCH_VALUE_THRESHOLD = 25;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $password;
+
+    protected $plainPassword;
+
+    public function __construct()
     {
         $this->prefrences = new ArrayCollection();
     }
@@ -87,4 +98,65 @@ class User
     {
         $this->email = $email;
     }
+    public function getPreferences()
+    {
+        return $this->prefrences;
+    }
+    
+
+  
+    public function preferencesMatch($themes)
+    {
+        $matchValue = 0;
+        foreach ($this->prefrences as $preference) {
+            foreach ($themes as $theme) {
+                if ($preference->match($theme)) {
+                    $matchValue += $preference->getValue() * $theme->getValue();
+                }
+            }
+        }
+
+        return $matchValue >= self::MATCH_VALUE_THRESHOLD;
+    }
+    public function getPassword()
+    {
+        return $this->password;
+    }
+
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
+
+
+    public function getRoles()
+    {
+        return [];
+    }
+
+    public function getSalt()
+    {
+        return null;
+    }
+
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    public function eraseCredentials()
+    {
+        // Suppression des données sensibles
+        $this->plainPassword = null;
+    }
+
+    public function getPlainPassword()
+    {
+        return $this->plainPassword;
+    }
+    public function setPlainPassword($password)
+    {
+        $this->plainPassword = $password;
+    }
+
 }

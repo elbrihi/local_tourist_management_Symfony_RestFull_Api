@@ -35,6 +35,15 @@ class Preference
      */
     protected $user;
 
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $id;
+    }
+    public function getId()
+    {
+        return $this->id;
+    }
     public function setName($name)
     {
         $this->name = $name ;
@@ -66,5 +75,10 @@ class Preference
     public function getUser()
     {
         return $this->user;
+    }
+
+    public function match(Theme $theme)
+    {
+        return $this->name === $theme->getName();
     }
 }
